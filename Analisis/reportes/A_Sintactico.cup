@@ -1,0 +1,157 @@
+/*----------------------1ra Area: Codigo de Usuario ---------------------------------------------*/
+//------------->Importaciones, paquetes
+
+package Analisis.reportes;
+import java_cup.runtime.Symbol;
+import java.util.LinkedList;
+import Analisis.TError;
+
+//-------------->Codigo para el parser, varibles, metodos
+
+parser code
+{:
+
+     public static LinkedList<TError> tablaES = new LinkedList<TError>();
+    //Metodo al que se llama automaticamente ante algun error sintactico
+    public void syntax_error(Symbol s)
+    {
+        String lexema = s.value.toString();
+        int fila=s.right;
+        int col = s.left;
+
+        System.out.println("!!!!!!Error sintactico recuperado!!!!!!!!");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+col);
+        
+        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
+        tablaES.add(datos);
+
+    }
+
+
+    //Metodo al que se llama en el momento  en que ya no  es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int col = s.left;
+        
+        System.out.println("!!!!!!Error sintactico, panic mode!!!!!!!!");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+col);
+
+        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
+        tablaES.add(datos);
+
+    }
+:}
+
+//------------>Codigo para las acciones gramaticales 
+action code{:
+
+
+
+:}
+
+
+/*----------------------2da Area: Area de Declaraciones ---------------------------------------------*/
+
+//------------------------------------> declaracion de terminales
+
+//simbolos
+terminal String coma,ptcoma,igual,parA,parC,mayorque;
+terminal String menorque,mayorigual,menorigual,negacion;
+terminal String dobleigual;
+
+
+//palabras reservadas
+terminal String PSArchivo,PSSumar,PSLeerArchivo,PSContar,PSContarsi;
+terminal String PSObtenersi,PSImprimir,PSGraficar;
+terminal String PSNumerico,PSPromedio,PSCadena;
+
+
+//expresiones regulares
+terminal String cadena,entero,decimal,identificador;
+
+//------------------------------>declaracion de no terminales
+//general
+non terminal String INICIO;
+non terminal String CUERPO;
+
+non terminal String DECLARACION;
+non terminal String IMPRIMIR;
+non terminal String TIPODATO;
+non terminal String GRAFICAR;
+non terminal String FUNCION;
+non terminal String COMPARACION;
+non terminal String LISTA_PARAMETROS;
+non terminal String PARAMETRO;
+non terminal String LISTA_CUERPO;
+
+ 
+//------------>precendencia de menor a mayor
+
+start with INICIO
+;
+/*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
+
+INICIO ::= LISTA_CUERPO
+        ;
+
+LISTA_CUERPO ::= LISTA_CUERPO CUERPO
+            |    CUERPO
+            ;        
+
+CUERPO ::= DECLARACION
+        |   IMPRIMIR
+        |   GRAFICAR
+        ;
+
+
+DECLARACION ::=  TIPODATO identificador igual FUNCION ptcoma
+            ;
+
+
+FUNCION     ::= PSLeerArchivo  parA cadena parC
+            |   PSSumar parA identificador coma cadena parC
+            |   PSContar parA identificador parC
+            |   PSPromedio parA identificador coma identificador parC
+            |   PSContarsi parA identificador coma  cadena coma COMPARACION coma PARAMETRO parC
+            |   PSObtenersi parA identificador coma cadena coma COMPARACION coma PARAMETRO parC
+            ;
+
+
+COMPARACION ::= menorque
+            |   mayorque
+            |   mayorigual
+            |   menorigual
+            |   dobleigual
+            |   negacion
+            ;
+
+TIPODATO ::=  PSCadena
+            | PSNumerico
+            | PSArchivo    
+            ;
+
+
+IMPRIMIR ::=  PSImprimir parA LISTA_PARAMETROS parC;
+GRAFICAR ::=  PSGraficar parA cadena coma cadena coma identificador coma cadena coma cadena  parC;
+
+
+LISTA_PARAMETROS ::= LISTA_PARAMETROS coma PARAMETRO 
+                    | PARAMETRO 
+                    ;
+
+
+PARAMETRO ::=  cadena
+            |   identificador
+            |   decimal
+            |   entero
+            ;
+
+
+//-------------------------------Definicion de variables ----------------------
+

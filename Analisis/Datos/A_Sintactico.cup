@@ -1,0 +1,113 @@
+/*----------------------1ra Area: Codigo de Usuario ---------------------------------------------*/
+//------------->Importaciones, paquetes
+
+package Analisis.Datos;
+import java_cup.runtime.Symbol;
+import java.util.LinkedList;
+import Analisis.TError;
+
+
+//-------------->Codigo para el parser, varibles, metodos
+
+parser code
+{:
+
+/*	public static LinkedList<Variable> Variables = new LinkedList<Variable>(); 
+
+	public  GraficaL graficaL = new GraficaL();
+	public  GraficaB graficaB = new GraficaB();
+	public 	Linea 	 line = new Linea();
+	public Galeria gal = new Galeria();
+ */
+
+     public static LinkedList<TError> tablaES = new LinkedList<TError>();
+    //Metodo al que se llama automaticamente ante algun error sintactico
+    public void syntax_error(Symbol s)
+    {
+        String lexema = s.value.toString();
+        int fila=s.right;
+        int col = s.left;
+
+        System.out.println("!!!!!!Error sintactico recuperado!!!!!!!!");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+col);
+        
+        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
+        tablaES.add(datos);
+
+    }
+
+
+    //Metodo al que se llama en el momento  en que ya no  es posible una recuperacion de errores
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        
+        String lexema = s.value.toString();
+        int fila = s.right;
+        int col = s.left;
+        
+        System.out.println("!!!!!!Error sintactico, panic mode!!!!!!!!");
+        System.out.println("\t\tLexema: "+lexema);
+        System.out.println("\t\tFila: "+fila);
+        System.out.println("\t\tColumna: "+col);
+
+        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
+        tablaES.add(datos);
+
+    }
+:}
+
+//------------>Codigo para las acciones gramaticales 
+action code{:
+
+:}
+
+/*----------------------2da Area: Area de Declaraciones ---------------------------------------------*/
+
+//------------------------------------> declaracion de terminales
+
+//simbolos
+terminal String coma,igual,corA,corC,llaveA,llaveC;
+
+//palabras reservadas
+terminal String PSRegistro,PSClaves;
+
+//Expresiones regualer
+terminal String cadena,entero,decimal;
+
+
+
+//------------------------------>declaracion de no terminales
+//general
+non terminal INICIO;
+non terminal CUERPO;
+non terminal REGISTRO;
+non terminal LCADENA;
+non terminal LREGISTRO;
+non terminal DATO;
+
+start with INICIO;
+/*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
+INICIO ::= CUERPO
+		;
+
+CUERPO ::= PSClaves   igual corA LCADENA   corC  PSRegistro  igual corA LREGISTRO corC
+		;
+
+LCADENA ::= LCADENA coma cadena
+		| 	cadena
+		;
+
+
+LREGISTRO	::= LREGISTRO llaveA REGISTRO llaveC
+			|	llaveA REGISTRO llaveC
+			;
+
+REGISTRO ::= REGISTRO coma DATO	
+			|  DATO
+		;
+
+DATO ::= cadena
+	 |	 decimal
+	 |	 entero
+	;
