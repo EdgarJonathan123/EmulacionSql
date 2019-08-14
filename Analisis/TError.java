@@ -11,7 +11,7 @@ package Analisis;
  */
 public class TError {
     
-   public String lexema,tipo,descripcion;
+    public String lexema,tipo,descripcion;
     public int linea, columna; 
 
     public TError(String lexema, int linea, int columna, String tipo, String descripcion) {

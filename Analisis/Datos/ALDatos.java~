@@ -5,8 +5,7 @@
 //--------------> Paquetes, importaciones
 package Analisis.Datos;
 import java_cup.runtime.*;
-import java.util.LinkedList;
-import Analisis.TError;
+import Analisis.TablaError;
 
 /*-----------2da Area: Opciones y Declaraciones-------------------------------*/
 
@@ -40,22 +39,22 @@ public class ALDatos implements java_cup.runtime.Scanner {
    * Translates characters to character classes
    */
   private static final char [] ZZ_CMAP = {
-     0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  2, 31,  1, 10,  0,  0, 
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  2, 27,  1,  8,  0,  0, 
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-     1,  0,  8,  0,  0,  0,  0,  0,  0,  0, 11,  0, 12,  5,  6,  9, 
-     4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  0,  0,  0, 13,  0,  0, 
-     0, 29,  3, 27,  3, 19,  3, 20,  3, 22,  3,  3, 28,  3,  3, 26, 
-     3,  3, 18, 24, 25,  3, 30,  3,  3,  3,  3, 14,  0, 15,  0,  7, 
-     0, 29,  3, 27,  3, 19,  3, 20,  3, 22,  3,  3, 28,  3,  3, 26, 
-     3,  3, 18, 24, 25,  3, 30,  3,  3,  3,  3, 16,  0, 17,  0,  0, 
-     0,  0,  0,  0,  0, 31,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+     1,  0,  6,  0,  0,  0,  0,  0,  0,  0,  9,  0, 10,  4,  5,  7, 
+     3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0, 11,  0,  0, 
+     0, 25,  0, 23,  0, 17,  0, 18,  0, 19,  0,  0, 24,  0,  0, 22, 
+     0,  0, 16, 20, 21,  0, 26,  0,  0,  0,  0, 12,  0, 13,  0,  0, 
+     0, 25,  0, 23,  0, 17,  0, 18,  0, 19,  0,  0, 24,  0,  0, 22, 
+     0,  0, 16, 20, 21,  0, 26,  0,  0,  0,  0, 14,  0, 15,  0,  0, 
+     0,  0,  0,  0,  0, 27,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-     0,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
      0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
-     0,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+     0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
   };
 
   /** 
@@ -64,14 +63,12 @@ public class ALDatos implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\1\2\1\3\1\4\1\5\3\1\1\6"+
-    "\1\7\1\10\1\11\1\12\1\13\2\4\3\0\1\14"+
-    "\2\0\2\4\1\15\1\16\1\0\2\4\1\0\2\4"+
-    "\1\0\2\4\1\0\1\4\2\17\1\0\1\4\1\0"+
-    "\1\4\2\20";
+    "\1\0\1\1\1\2\1\3\1\4\3\1\1\5\1\6"+
+    "\1\7\1\10\1\11\1\12\2\1\2\0\1\13\4\0"+
+    "\1\14\1\15\10\0\1\16\2\0\1\17";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[46];
+    int [] result = new int[37];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -96,15 +93,14 @@ public class ALDatos implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\40\0\40\0\40\0\100\0\140\0\200\0\240"+
-    "\0\300\0\40\0\40\0\40\0\40\0\40\0\40\0\340"+
-    "\0\u0100\0\u0120\0\u0140\0\240\0\40\0\u0160\0\u0180\0\u01a0"+
-    "\0\u01c0\0\u0140\0\40\0\u01e0\0\u0200\0\u0220\0\u0240\0\u0260"+
-    "\0\u0280\0\u02a0\0\u02c0\0\u02e0\0\u0300\0\u0320\0\40\0\100"+
-    "\0\u0340\0\u0360\0\u0380\0\u03a0\0\40\0\100";
+    "\0\0\0\34\0\34\0\34\0\70\0\124\0\160\0\214"+
+    "\0\34\0\34\0\34\0\34\0\34\0\34\0\250\0\304"+
+    "\0\340\0\160\0\34\0\374\0\u0118\0\u0134\0\u0150\0\340"+
+    "\0\34\0\u016c\0\u0188\0\u01a4\0\u01c0\0\u01dc\0\u01f8\0\u0214"+
+    "\0\u0230\0\34\0\u024c\0\u0268\0\34";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[46];
+    int [] result = new int[37];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -127,40 +123,19 @@ public class ALDatos implements java_cup.runtime.Scanner {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\1\3\1\4\1\5\1\6\1\7\2\2\1\10"+
-    "\1\11\1\3\1\2\1\12\1\13\1\14\1\15\1\16"+
-    "\1\17\1\20\2\5\1\2\1\5\1\2\3\5\1\21"+
-    "\3\5\44\0\2\5\1\22\1\0\1\5\12\0\3\5"+
-    "\1\0\1\5\1\0\7\5\5\0\1\6\1\0\1\23"+
-    "\35\0\1\6\33\0\10\24\1\25\27\24\11\0\1\26"+
-    "\1\0\1\27\27\0\2\5\1\22\1\0\1\5\12\0"+
-    "\1\5\1\30\1\5\1\0\1\5\1\0\7\5\4\0"+
-    "\2\5\1\22\1\0\1\5\12\0\3\5\1\0\1\5"+
-    "\1\0\4\5\1\31\2\5\5\0\1\5\37\0\1\32"+
-    "\33\0\2\26\1\33\7\26\1\33\25\26\13\27\1\34"+
-    "\24\27\3\0\2\5\1\22\1\0\1\5\12\0\2\5"+
-    "\1\35\1\0\1\5\1\0\7\5\4\0\2\5\1\22"+
-    "\1\0\1\5\12\0\3\5\1\0\1\5\1\0\5\5"+
-    "\1\36\1\5\1\0\11\27\1\33\1\27\1\34\24\27"+
-    "\3\0\2\5\1\22\1\0\1\5\12\0\3\5\1\37"+
-    "\1\40\1\0\7\5\4\0\2\5\1\22\1\0\1\5"+
-    "\12\0\3\5\1\0\1\5\1\0\6\5\1\41\30\0"+
-    "\2\42\12\0\2\5\1\22\1\0\1\5\12\0\3\5"+
-    "\1\0\1\5\1\42\1\43\6\5\4\0\2\5\1\22"+
-    "\1\0\1\5\12\0\1\5\1\44\1\5\1\0\1\5"+
-    "\1\0\7\5\32\0\1\45\11\0\2\5\1\22\1\0"+
-    "\1\5\12\0\3\5\1\0\1\5\1\0\1\5\1\46"+
-    "\5\5\4\0\2\5\1\22\1\0\1\5\12\0\3\5"+
-    "\1\0\1\5\1\47\1\50\6\5\23\0\1\51\20\0"+
-    "\2\5\1\22\1\0\1\5\12\0\1\52\2\5\1\0"+
-    "\1\5\1\0\7\5\33\0\1\53\10\0\2\5\1\22"+
-    "\1\0\1\5\12\0\3\5\1\0\1\5\1\0\2\5"+
-    "\1\54\4\5\30\0\2\55\12\0\2\5\1\22\1\0"+
-    "\1\5\12\0\3\5\1\0\1\5\1\55\1\56\6\5"+
-    "\1\0";
+    "\1\2\1\3\1\4\1\5\1\6\1\2\1\7\1\10"+
+    "\1\3\1\2\1\11\1\12\1\13\1\14\1\15\1\16"+
+    "\1\17\6\2\1\20\3\2\40\0\1\5\1\0\1\21"+
+    "\31\0\1\5\30\0\6\22\1\23\25\22\7\0\1\24"+
+    "\1\0\1\25\43\0\1\26\42\0\1\27\6\0\1\30"+
+    "\30\0\2\24\1\31\5\24\1\31\23\24\11\25\1\32"+
+    "\22\25\22\0\1\33\42\0\1\34\2\0\7\25\1\31"+
+    "\1\25\1\32\22\25\23\0\1\35\42\0\1\36\25\0"+
+    "\1\37\30\0\1\40\37\0\1\41\32\0\1\42\27\0"+
+    "\1\43\41\0\1\44\31\0\1\45\7\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[960];
+    int [] result = new int[644];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -198,13 +173,11 @@ public class ALDatos implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\3\11\5\1\6\11\2\1\3\0\1\11\2\0"+
-    "\3\1\1\11\1\0\2\1\1\0\2\1\1\0\2\1"+
-    "\1\0\1\1\1\11\1\1\1\0\1\1\1\0\1\1"+
-    "\1\11\1\1";
+    "\1\0\3\11\4\1\6\11\2\1\2\0\1\11\4\0"+
+    "\1\1\1\11\10\0\1\11\2\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[46];
+    int [] result = new int[37];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -281,8 +254,7 @@ public class ALDatos implements java_cup.runtime.Scanner {
 
   /* user code: */
     //--------->Codigo de Usuario en sintaxis Java
-    
-    public static LinkedList<TError> tablaEL = new LinkedList<TError>();
+    public TablaError tablaEL = TablaError.getInstance();
 
 
   /**
@@ -648,104 +620,97 @@ public class ALDatos implements java_cup.runtime.Scanner {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
             zzDoEOF();
-          { return new java_cup.runtime.Symbol(simbolos.EOF); }
+          { return new java_cup.runtime.Symbol(simDatos.EOF); }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.out.println("Error Lexico: "+yytext()+", Linea: "+yyline+", Col"+yycolumn);
-                     TError datos = new TError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
-                     tablaEL.add(datos);
+                    tablaEL.setError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
             } 
             // fall through
-          case 17: break;
+          case 16: break;
           case 2: 
             { /*Espacios en blanco, ignorados*/
             } 
             // fall through
-          case 18: break;
+          case 17: break;
           case 3: 
             { /*Saltos de linea, ignorados*/
             } 
             // fall through
-          case 19: break;
+          case 18: break;
           case 4: 
-            { System.out.println("Encontro: ["+yytext()+"] token id"); 
-                         return new Symbol(simbolos.identificador,yyline,yychar, yytext());
+            { System.out.println("Encontro: ["+yytext()+"] Numero entero"); 
+                         return new Symbol(simDatos.entero,yyline,yychar, yytext());
+            } 
+            // fall through
+          case 19: break;
+          case 5: 
+            { System.out.println("Simbolo: ["+yytext()+"] coma");
+                    return new Symbol(simDatos.coma,yyline,yychar, yytext());
             } 
             // fall through
           case 20: break;
-          case 5: 
-            { System.out.println("Encontro: ["+yytext()+"] Numero entero"); 
-                         return new Symbol(simbolos.entero,yyline,yychar, yytext());
+          case 6: 
+            { System.out.println("Simbolo: ["+yytext()+"] igual"); 
+                    return new Symbol(simDatos.igual,yyline,yychar, yytext());
             } 
             // fall through
           case 21: break;
-          case 6: 
-            { System.out.println("Simbolo: ["+yytext()+"] dos puntos");
-                    return new Symbol(simbolos.coma,yyline,yychar, yytext());
+          case 7: 
+            { System.out.println("Simbolo: ["+yytext()+"] corchetes Abrierto"); 
+                    return new Symbol(simDatos.corA,yyline,yychar, yytext());
             } 
             // fall through
           case 22: break;
-          case 7: 
-            { System.out.println("Simbolo: ["+yytext()+"] igual"); 
-                    return new Symbol(simbolos.igual,yyline,yychar, yytext());
+          case 8: 
+            { System.out.println("Simbolo: ["+yytext()+"] corchetes Cerrado"); 
+                    return new Symbol(simDatos.corC,yyline,yychar, yytext());
             } 
             // fall through
           case 23: break;
-          case 8: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.corA,yyline,yychar, yytext());
+          case 9: 
+            { System.out.println("Simbolo: ["+yytext()+"] llave abierta"); 
+                    return new Symbol(simDatos.llaveA,yyline,yychar, yytext());
             } 
             // fall through
           case 24: break;
-          case 9: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.corC,yyline,yychar, yytext());
+          case 10: 
+            { System.out.println("Simbolo: ["+yytext()+"] llave Cerrada"); 
+                    return new Symbol(simDatos.llaveC,yyline,yychar, yytext());
             } 
             // fall through
           case 25: break;
-          case 10: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.llaveA,yyline,yychar, yytext());
+          case 11: 
+            { System.out.println("Encontro: ["+yytext()+"] Cadena de Texto"); 
+                         return new Symbol(simDatos.cadena,yyline,yychar, yytext().replace("\"", "") );
             } 
             // fall through
           case 26: break;
-          case 11: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.llaveC,yyline,yychar, yytext());
+          case 12: 
+            { System.out.println("Encontro: ["+yytext()+"] Numero decimal"); 
+                         return new Symbol(simDatos.decimal,yyline,yychar, yytext());
             } 
             // fall through
           case 27: break;
-          case 12: 
-            { System.out.println("Encontro: ["+yytext()+"] Cadena de Texto"); 
-                         return new Symbol(simbolos.cadena,yyline,yychar, yytext().replace("\"", "") );
-            } 
-            // fall through
-          case 28: break;
           case 13: 
-            { System.out.println("Encontro: ["+yytext()+"] Numero decimal"); 
-                         return new Symbol(simbolos.decimal,yyline,yychar, yytext());
-            } 
-            // fall through
-          case 29: break;
-          case 14: 
             { 
             } 
             // fall through
-          case 30: break;
+          case 28: break;
+          case 14: 
+            { System.out.println("Palabra Reservada: ["+yytext()+"]"); 
+                    return new Symbol(simDatos.PSClaves,yyline,yychar, yytext());
+            } 
+            // fall through
+          case 29: break;
           case 15: 
             { System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSClaves,yyline,yychar, yytext());
+                    return new Symbol(simDatos.PSRegistro,yyline,yychar, yytext());
             } 
             // fall through
-          case 31: break;
-          case 16: 
-            { System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSRegistro,yyline,yychar, yytext());
-            } 
-            // fall through
-          case 32: break;
+          case 30: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

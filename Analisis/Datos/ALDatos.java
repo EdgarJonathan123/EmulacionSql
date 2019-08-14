@@ -5,8 +5,7 @@
 //--------------> Paquetes, importaciones
 package Analisis.Datos;
 import java_cup.runtime.*;
-import java.util.LinkedList;
-import Analisis.TError;
+import Analisis.TablaError;
 
 /*-----------2da Area: Opciones y Declaraciones-------------------------------*/
 
@@ -255,8 +254,7 @@ public class ALDatos implements java_cup.runtime.Scanner {
 
   /* user code: */
     //--------->Codigo de Usuario en sintaxis Java
-    
-    public static LinkedList<TError> tablaEL = new LinkedList<TError>();
+    public TablaError tablaEL = TablaError.getInstance();
 
 
   /**
@@ -622,14 +620,13 @@ public class ALDatos implements java_cup.runtime.Scanner {
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
             zzDoEOF();
-          { return new java_cup.runtime.Symbol(simbolos.EOF); }
+          { return new java_cup.runtime.Symbol(simDatos.EOF); }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.out.println("Error Lexico: "+yytext()+", Linea: "+yyline+", Col"+yycolumn);
-                     TError datos = new TError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
-                     tablaEL.add(datos);
+                    tablaEL.setError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
             } 
             // fall through
           case 16: break;
@@ -645,55 +642,55 @@ public class ALDatos implements java_cup.runtime.Scanner {
           case 18: break;
           case 4: 
             { System.out.println("Encontro: ["+yytext()+"] Numero entero"); 
-                         return new Symbol(simbolos.entero,yyline,yychar, yytext());
+                         return new Symbol(simDatos.entero,yyline,yychar, yytext());
             } 
             // fall through
           case 19: break;
           case 5: 
-            { System.out.println("Simbolo: ["+yytext()+"] dos puntos");
-                    return new Symbol(simbolos.coma,yyline,yychar, yytext());
+            { System.out.println("Simbolo: ["+yytext()+"] coma");
+                    return new Symbol(simDatos.coma,yyline,yychar, yytext());
             } 
             // fall through
           case 20: break;
           case 6: 
             { System.out.println("Simbolo: ["+yytext()+"] igual"); 
-                    return new Symbol(simbolos.igual,yyline,yychar, yytext());
+                    return new Symbol(simDatos.igual,yyline,yychar, yytext());
             } 
             // fall through
           case 21: break;
           case 7: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.corA,yyline,yychar, yytext());
+            { System.out.println("Simbolo: ["+yytext()+"] corchetes Abrierto"); 
+                    return new Symbol(simDatos.corA,yyline,yychar, yytext());
             } 
             // fall through
           case 22: break;
           case 8: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.corC,yyline,yychar, yytext());
+            { System.out.println("Simbolo: ["+yytext()+"] corchetes Cerrado"); 
+                    return new Symbol(simDatos.corC,yyline,yychar, yytext());
             } 
             // fall through
           case 23: break;
           case 9: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.llaveA,yyline,yychar, yytext());
+            { System.out.println("Simbolo: ["+yytext()+"] llave abierta"); 
+                    return new Symbol(simDatos.llaveA,yyline,yychar, yytext());
             } 
             // fall through
           case 24: break;
           case 10: 
-            { System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.llaveC,yyline,yychar, yytext());
+            { System.out.println("Simbolo: ["+yytext()+"] llave Cerrada"); 
+                    return new Symbol(simDatos.llaveC,yyline,yychar, yytext());
             } 
             // fall through
           case 25: break;
           case 11: 
             { System.out.println("Encontro: ["+yytext()+"] Cadena de Texto"); 
-                         return new Symbol(simbolos.cadena,yyline,yychar, yytext().replace("\"", "") );
+                         return new Symbol(simDatos.cadena,yyline,yychar, yytext().replace("\"", "") );
             } 
             // fall through
           case 26: break;
           case 12: 
             { System.out.println("Encontro: ["+yytext()+"] Numero decimal"); 
-                         return new Symbol(simbolos.decimal,yyline,yychar, yytext());
+                         return new Symbol(simDatos.decimal,yyline,yychar, yytext());
             } 
             // fall through
           case 27: break;
@@ -704,13 +701,13 @@ public class ALDatos implements java_cup.runtime.Scanner {
           case 28: break;
           case 14: 
             { System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSClaves,yyline,yychar, yytext());
+                    return new Symbol(simDatos.PSClaves,yyline,yychar, yytext());
             } 
             // fall through
           case 29: break;
           case 15: 
             { System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSRegistro,yyline,yychar, yytext());
+                    return new Symbol(simDatos.PSRegistro,yyline,yychar, yytext());
             } 
             // fall through
           case 30: break;

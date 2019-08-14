@@ -4,23 +4,23 @@
 package Analisis.Datos;
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
-import Analisis.TError;
-
+import Logica.Simbolo;
+import Logica.Datos.Archivo;
+import Logica.Datos.Registro;
+import Logica.TipoDato;
+import Analisis.TablaError;
 
 //-------------->Codigo para el parser, varibles, metodos
 
 parser code
-{:
+{:  
 
-/*	public static LinkedList<Variable> Variables = new LinkedList<Variable>(); 
+    public Archivo raiz;
+    private Registro aux = null;
+    private int indexR=0;
 
-	public  GraficaL graficaL = new GraficaL();
-	public  GraficaB graficaB = new GraficaB();
-	public 	Linea 	 line = new Linea();
-	public Galeria gal = new Galeria();
- */
 
-     public static LinkedList<TError> tablaES = new LinkedList<TError>();
+     public TablaError tablaES = TablaError.getInstance();
     //Metodo al que se llama automaticamente ante algun error sintactico
     public void syntax_error(Symbol s)
     {
@@ -33,8 +33,7 @@ parser code
         System.out.println("\t\tFila: "+fila);
         System.out.println("\t\tColumna: "+col);
         
-        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
-        tablaES.add(datos);
+        tablaES.setError(lexema,fila,col,"Error sintactico","El caracter no esperado");
 
     }
 
@@ -51,8 +50,7 @@ parser code
         System.out.println("\t\tFila: "+fila);
         System.out.println("\t\tColumna: "+col);
 
-        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
-        tablaES.add(datos);
+        tablaES.setError(lexema,fila,col,"Error sintactico","El caracter no esperado");
 
     }
 :}
@@ -80,34 +78,129 @@ terminal String cadena,entero,decimal;
 //------------------------------>declaracion de no terminales
 //general
 non terminal INICIO;
-non terminal CUERPO;
-non terminal REGISTRO;
-non terminal LCADENA;
-non terminal LREGISTRO;
-non terminal DATO;
+non terminal Archivo CUERPO;
+non terminal Registro REGISTRO;
+non terminal LinkedList<String> LCADENA;
+non terminal LinkedList<Registro>  LREGISTRO;
+non terminal Simbolo DATO;
 
 start with INICIO;
 /*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
-INICIO ::= CUERPO
+INICIO ::= CUERPO:a 
+        {:
+            parser.raiz = a;
+        :}
 		;
 
-CUERPO ::= PSClaves   igual corA LCADENA   corC  PSRegistro  igual corA LREGISTRO corC
+CUERPO ::= PSClaves igual corA LCADENA:claves corC   PSRegistro igual corA LREGISTRO:registros corC
+            {: 
+               RESULT = new Archivo(claves,registros);
+            :}
 		;
 
-LCADENA ::= LCADENA coma cadena
-		| 	cadena
+LCADENA ::= LCADENA:a coma cadena:b
+        {: 
+                RESULT =a;
+                RESULT.add(b);
+        :}
+
+		| 	cadena:a
+             {: 
+                RESULT = new LinkedList<String>();
+                RESULT.add(a);
+               
+            :}
 		;
 
 
-LREGISTRO	::= LREGISTRO llaveA REGISTRO llaveC
-			|	llaveA REGISTRO llaveC
+LREGISTRO	::= LREGISTRO:a llaveA REGISTRO:b llaveC
+            {: 
+               if(aux.size()==a.size()){
+                    RESULT =a;
+                    RESULT.add(b);
+                    System.out.println("");
+                }else{
+                
+                }
+                
+            :}
+			|	llaveA REGISTRO:a llaveC
+            {:
+            
+                    RESULT = new LinkedList<Registro>();
+                    RESULT.add(a);
+                    aux = a;
+
+            :}
 			;
 
-REGISTRO ::= REGISTRO coma DATO	
-			|  DATO
+
+REGISTRO ::= REGISTRO:a coma DATO:b	
+            {:
+            
+                indexR++;
+                if(aux!=null){
+
+                    if(indexR<aux.size()){
+
+                        Simbolo  t1 = aux.get(indexR);
+
+                        if(t1.compararTipo(b)==0){
+                            RESULT = a; 
+                            RESULT.add(b);
+                            System.out.println("indexR = "+indexR);
+                            System.out.println("aux.size = "+aux.size());
+
+                        }else{
+                            //error semantico
+                            System.out.println("Error Semantico");
+                        }
+
+                    }else{
+
+                        //error semantico
+                        System.out.println("Error Semantico");
+                    }
+                  
+
+                }else{
+                    RESULT = a; 
+                    RESULT.add(b);
+                    System.out.println("Primera ves indexR = "+indexR);
+                }
+
+            :}
+
+			|  DATO:a
+            {:
+        
+                indexR=0;
+                if(aux!=null){
+
+
+                    Simbolo  t1 = aux.get(indexR);
+                
+                    if(t1.compararTipo(a)==0){
+                        RESULT = new Registro();
+                        RESULT.add(a);
+                        System.out.println("indexR = "+indexR);
+                    }else{
+                        //error semantico
+                        System.out.println("Error Semantico");
+                    }
+
+                }else{
+                    RESULT = new Registro();
+                    RESULT.add(a);
+                    System.out.println("Primera ves indexR = "+indexR);
+                }
+   
+
+              
+            :}
 		;
 
-DATO ::= cadena
-	 |	 decimal
-	 |	 entero
+DATO ::= cadena:a{: RESULT  = new Simbolo(TipoDato.cadena,a); :}
+	 |	 decimal:a{:RESULT = new Simbolo(TipoDato.decimal,a);:}
+	 |	 entero:a{:RESULT  = new Simbolo(TipoDato.entero,a);:}
 	;

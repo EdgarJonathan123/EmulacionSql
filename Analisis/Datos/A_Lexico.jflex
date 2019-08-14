@@ -3,22 +3,20 @@
 //--------------> Paquetes, importaciones
 package Analisis.Datos;
 import java_cup.runtime.*;
-import java.util.LinkedList;
-import Analisis.TError;
+import Analisis.TablaError;
 
 /*-----------2da Area: Opciones y Declaraciones-------------------------------*/
 %%  
 
 %{
     //--------->Codigo de Usuario en sintaxis Java
-    
-    public static LinkedList<TError> tablaEL = new LinkedList<TError>();
+    public TablaError tablaEL = TablaError.getInstance();
 %}
 
 //------------>Directivas de JFlex
 %public
 %class ALDatos
-%cupsym simbolos
+%cupsym simDatos
 %cup
 %char
 %column
@@ -29,8 +27,8 @@ import Analisis.TError;
 %8bit
 
 
-//-----> Simbolos
-//simbolos
+//-----> simDatos
+//simDatos
 
 /* COMA   = ","
 PTCOMA = ";" */
@@ -40,14 +38,14 @@ PTCOMA = ";" */
 SPACE   = [\ \r\t\f\t]
 ENTER   = [\ \n]
 
-letra    = [A-Za-zñÑ]
+//letra    = [A-Za-zñÑ]
 
 digito  = [0-9]+
 entero = "-"? {digito}+
 
 decimal = "-"? {digito}+ "." {digito}+
 
-identificador = {letra}({letra}|{entero}|"_")*
+//identificador = {letra}({letra}|{entero}|"_")*
 
 
 //identificador =  [A-Za-zñÑ]
@@ -61,46 +59,46 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
 %%
 /*-----------3ra Area: Reglas Lexicas-------------------------------*/
 
-//------------------->Simbolos
+//------------------->simDatos
 
-<YYINITIAL>     "," {System.out.println("Simbolo: ["+yytext()+"] dos puntos");
-                    return new Symbol(simbolos.coma,yyline,yychar, yytext());}                     
+<YYINITIAL>     "," {System.out.println("Simbolo: ["+yytext()+"] coma");
+                    return new Symbol(simDatos.coma,yyline,yychar, yytext());}                     
 
 <YYINITIAL>     "=" {System.out.println("Simbolo: ["+yytext()+"] igual"); 
-                    return new Symbol(simbolos.igual,yyline,yychar, yytext());}
+                    return new Symbol(simDatos.igual,yyline,yychar, yytext());}
 
-<YYINITIAL>     "[" {System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.corA,yyline,yychar, yytext());}
+<YYINITIAL>     "[" {System.out.println("Simbolo: ["+yytext()+"] corchetes Abrierto"); 
+                    return new Symbol(simDatos.corA,yyline,yychar, yytext());}
                     
-<YYINITIAL>     "]" {System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.corC,yyline,yychar, yytext());}  
+<YYINITIAL>     "]" {System.out.println("Simbolo: ["+yytext()+"] corchetes Cerrado"); 
+                    return new Symbol(simDatos.corC,yyline,yychar, yytext());}  
 
-<YYINITIAL>     "{" {System.out.println("Simbolo: ["+yytext()+"] Parentesis Abrierto"); 
-                    return new Symbol(simbolos.llaveA,yyline,yychar, yytext());}
+<YYINITIAL>     "{" {System.out.println("Simbolo: ["+yytext()+"] llave abierta"); 
+                    return new Symbol(simDatos.llaveA,yyline,yychar, yytext());}
                     
-<YYINITIAL>     "}" {System.out.println("Simbolo: ["+yytext()+"] Parentesis Cerrado"); 
-                    return new Symbol(simbolos.llaveC,yyline,yychar, yytext());}  
+<YYINITIAL>     "}" {System.out.println("Simbolo: ["+yytext()+"] llave Cerrada"); 
+                    return new Symbol(simDatos.llaveC,yyline,yychar, yytext());}  
 
 
 //------------------------> Palabras reservadas---------------------
 
 <YYINITIAL> "registros" {System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSRegistro,yyline,yychar, yytext());}
+                    return new Symbol(simDatos.PSRegistro,yyline,yychar, yytext());}
                     
 <YYINITIAL> "claves" {System.out.println("Palabra Reservada: ["+yytext()+"]"); 
-                    return new Symbol(simbolos.PSClaves,yyline,yychar, yytext());}
+                    return new Symbol(simDatos.PSClaves,yyline,yychar, yytext());}
 
 
 
-//----------------------->Simbolos Expresiones regulares
+//----------------------->simDatos Expresiones regulares
 <YYINITIAL>     {cadena} {System.out.println("Encontro: ["+yytext()+"] Cadena de Texto"); 
-                         return new Symbol(simbolos.cadena,yyline,yychar, yytext().replace("\"", "") );} 
+                         return new Symbol(simDatos.cadena,yyline,yychar, yytext().replace("\"", "") );} 
                          
 <YYINITIAL>     {entero} {System.out.println("Encontro: ["+yytext()+"] Numero entero"); 
-                         return new Symbol(simbolos.entero,yyline,yychar, yytext());} 
+                         return new Symbol(simDatos.entero,yyline,yychar, yytext());} 
                          
 <YYINITIAL>     {decimal} {System.out.println("Encontro: ["+yytext()+"] Numero decimal"); 
-                         return new Symbol(simbolos.decimal,yyline,yychar, yytext());}  
+                         return new Symbol(simDatos.decimal,yyline,yychar, yytext());}  
 
 
 //---------------->Espacios
@@ -112,9 +110,10 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
 
 
  //--------------->Errores Lexicos
-<YYINITIAL> .                   {System.out.println("Error Lexico: "+yytext()+", Linea: "+yyline+", Col"+yycolumn);
-                     TError datos = new TError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
-                     tablaEL.add(datos);}
+<YYINITIAL> .   {
+                    System.out.println("Error Lexico: "+yytext()+", Linea: "+yyline+", Col"+yycolumn);
+                    tablaEL.setError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
+                }
 
 
 

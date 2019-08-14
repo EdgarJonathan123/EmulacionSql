@@ -6,7 +6,7 @@
 package Analisis.Datos;
 
 /** CUP generated class containing symbol constants. */
-public class simbolos {
+public class simDatos {
   /* terminals */
   public static final int PSRegistro = 8;
   public static final int llaveC = 7;
