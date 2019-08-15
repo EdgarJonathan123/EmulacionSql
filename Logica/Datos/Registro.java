@@ -53,5 +53,18 @@ public class Registro {
     public void setDatos(LinkedList<Simbolo> datos) {
         this.datos = datos;
     }
+   
+    
+    
+    public void Imprimir(){
+        
+        for (Simbolo dato : datos) {
+            String data = (String)dato.valor;
+            System.out.print("{"+data+"] - ");
+        }
+        System.out.println("");
+    }
+    
+    
 
 }

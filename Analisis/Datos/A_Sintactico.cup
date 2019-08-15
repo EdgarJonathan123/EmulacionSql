@@ -15,18 +15,19 @@ import Analisis.TablaError;
 parser code
 {:  
 
-    public Archivo raiz;
+    public  Archivo raiz;
     private Registro aux = null;
     private int indexR=0;
-
+    private int tamanioClave=0;
+    private Boolean errorSemantico = false;
 
      public TablaError tablaES = TablaError.getInstance();
     //Metodo al que se llama automaticamente ante algun error sintactico
     public void syntax_error(Symbol s)
     {
         String lexema = s.value.toString();
-        int fila=s.right;
-        int col = s.left;
+        int fila=s.left;
+        int col = s.right;
 
         System.out.println("!!!!!!Error sintactico recuperado!!!!!!!!");
         System.out.println("\t\tLexema: "+lexema);
@@ -58,6 +59,53 @@ parser code
 //------------>Codigo para las acciones gramaticales 
 action code{:
 
+
+        public void analizar(Simbolo b, Boolean Reinicio, int linea, int columna) {
+
+            if (Reinicio) {
+                indexR = 0;
+            }
+
+            if (aux != null) {
+                if (indexR < tamanioClave) {
+                    Simbolo t1 = aux.get(indexR);
+                    if (t1.compararTipo(b) != 0) {
+                        //error semantico
+                        System.out.println("Error Semantico EL TIPO QUE VIENE NO ES EL QUE SE REQUIERE");
+                        System.out.println("t1: " + t1.tipo.name());
+                        System.out.println("t2: " + b.tipo.name());
+                        String descripcion = "EL tipo de dato no coincide con el tipo de dato pedido";
+                        tablaES.setError(b.valor.toString(), linea, columna, "Dato: Semantico", descripcion);
+                        errorSemantico = true;
+                    }
+
+                } else {
+                    //error semantico
+                    System.out.println("Error Semantico EL TAMANIO DE EL REGISTRO ES ES MAYOR AL PEDIDO ");
+
+                    String descripcion = "La posicion del dato desborda al registro";
+                    tablaES.setError(b.valor.toString(), linea, columna, "Dato: Semantico", descripcion);
+                    errorSemantico = true;
+                }
+
+            }
+
+            indexR++;
+
+        }
+
+
+         private void verificarTamanio(int aux, int b, int linea ,int columna) {
+
+            if (b < aux) {
+                String descripcion = "ELtamano del registro es menor al definido";
+                System.out.println(descripcion);
+                tablaES.setError("Registro", linea, columna, "Dato: Semantico ", descripcion);
+                errorSemantico = true;
+
+            }
+        }
+
 :}
 
 /*----------------------2da Area: Area de Declaraciones ---------------------------------------------*/
@@ -88,7 +136,16 @@ start with INICIO;
 /*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
 INICIO ::= CUERPO:a 
         {:
-            parser.raiz = a;
+
+         
+
+            if(!errorSemantico){
+                System.out.println("error Semantico = false");
+                parser.raiz = a;  
+            }else{
+                System.out.println("error Semantico = true");
+            }
+                
         :}
 		;
 
@@ -102,105 +159,49 @@ LCADENA ::= LCADENA:a coma cadena:b
         {: 
                 RESULT =a;
                 RESULT.add(b);
+                tamanioClave++;
         :}
 
 		| 	cadena:a
              {: 
                 RESULT = new LinkedList<String>();
                 RESULT.add(a);
-               
+               tamanioClave++;
             :}
 		;
 
 
 LREGISTRO	::= LREGISTRO:a llaveA REGISTRO:b llaveC
             {: 
-               if(aux.size()==a.size()){
-                    RESULT =a;
-                    RESULT.add(b);
-                    System.out.println("");
-                }else{
-                
-                }
-                
+                verificarTamanio(aux.size(), b.size(), bleft ,bright);
+                RESULT =a;
+                RESULT.add(b);
             :}
 			|	llaveA REGISTRO:a llaveC
             {:
-            
                     RESULT = new LinkedList<Registro>();
                     RESULT.add(a);
                     aux = a;
-
             :}
 			;
 
 
 REGISTRO ::= REGISTRO:a coma DATO:b	
             {:
-            
-                indexR++;
-                if(aux!=null){
-
-                    if(indexR<aux.size()){
-
-                        Simbolo  t1 = aux.get(indexR);
-
-                        if(t1.compararTipo(b)==0){
-                            RESULT = a; 
-                            RESULT.add(b);
-                            System.out.println("indexR = "+indexR);
-                            System.out.println("aux.size = "+aux.size());
-
-                        }else{
-                            //error semantico
-                            System.out.println("Error Semantico");
-                        }
-
-                    }else{
-
-                        //error semantico
-                        System.out.println("Error Semantico");
-                    }
-                  
-
-                }else{
-                    RESULT = a; 
-                    RESULT.add(b);
-                    System.out.println("Primera ves indexR = "+indexR);
-                }
-
+                analizar(b,false,bleft, bright);
+                RESULT = a;
+                RESULT.add(b);
             :}
 
 			|  DATO:a
             {:
-        
-                indexR=0;
-                if(aux!=null){
-
-
-                    Simbolo  t1 = aux.get(indexR);
-                
-                    if(t1.compararTipo(a)==0){
-                        RESULT = new Registro();
-                        RESULT.add(a);
-                        System.out.println("indexR = "+indexR);
-                    }else{
-                        //error semantico
-                        System.out.println("Error Semantico");
-                    }
-
-                }else{
-                    RESULT = new Registro();
-                    RESULT.add(a);
-                    System.out.println("Primera ves indexR = "+indexR);
-                }
-   
-
-              
+                analizar(a,true,aleft, aright);
+                RESULT = new Registro();
+                RESULT.add(a);
             :}
 		;
 
 DATO ::= cadena:a{: RESULT  = new Simbolo(TipoDato.cadena,a); :}
-	 |	 decimal:a{:RESULT = new Simbolo(TipoDato.decimal,a);:}
-	 |	 entero:a{:RESULT  = new Simbolo(TipoDato.entero,a);:}
+	 |	 decimal:a{:RESULT = new Simbolo(TipoDato.numerico,a);:}
+	 |	 entero:a{:RESULT  = new Simbolo(TipoDato.numerico,a);:}
 	;

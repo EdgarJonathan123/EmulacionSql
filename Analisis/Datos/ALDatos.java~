@@ -636,7 +636,7 @@ public class ALDatos implements java_cup.runtime.Scanner {
             // fall through
           case 17: break;
           case 3: 
-            { /*Saltos de linea, ignorados*/
+            { yychar =0;
             } 
             // fall through
           case 18: break;

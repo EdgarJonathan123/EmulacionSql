@@ -6,7 +6,7 @@
 package Analisis.reportes;
 
 /** CUP generated class containing symbol constants. */
-public class simbolos {
+public class simReportes {
   /* terminals */
   public static final int menorigual = 10;
   public static final int PSGraficar = 20;

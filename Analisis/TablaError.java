@@ -5,6 +5,9 @@
  */
 package Analisis;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.LinkedList;
 
 /**
@@ -17,7 +20,8 @@ public class TablaError {
 
     private LinkedList<TError> tabla;
 
-    private TablaError() {}
+    private TablaError() {
+    }
 
     public static TablaError getInstance() {
 
@@ -30,18 +34,14 @@ public class TablaError {
 
     public void setError(String lexema, int linea, int columna, String tipo, String descripcion) {
 
-        if (getTabla() != null) {
-
+        if (tabla != null) {
             TError datos = new TError(lexema, linea, columna, tipo, descripcion);
-            getTabla().add(datos);
+            tabla.add(datos);
 
         } else {
-            
-            setTabla(new LinkedList<>());
-            
+            tabla = new LinkedList<>();
             TError datos = new TError(lexema, linea, columna, tipo, descripcion);
-            getTabla().add(datos);
-
+            tabla.add(datos);
         }
 
     }
@@ -58,6 +58,116 @@ public class TablaError {
      */
     public void setTabla(LinkedList<TError> tabla) {
         this.tabla = tabla;
+    }
+
+    public void imprimir() {
+
+        System.out.println("----------------------------Inicio Errores-------------------------");
+        if (instancia != null) {
+
+            for (TError tError : tabla) {
+                tError.imprimir();
+            }
+        }
+        System.out.println("\n----------------------------Fin Errores----------------------------");
+    }
+
+    public String encabazado() {
+        String result = "<!DOCTYPE html>\n"
+                + "<html >\n"
+                + "<head>\n"
+                + "  <meta charset=\"UTF-8\">\n"
+                + "  <title>Fixed table header</title>\n"
+                + "  \n"
+                + "  <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css\">\n"
+                + "\n"
+                + "  \n"
+                + "      <link rel=\"stylesheet\" href=\"css/style.css\">\n"
+                + "\n"
+                + "  \n"
+                + "</head>\n"
+                + "\n"
+                + "<body>\n"
+                + "  <section>\n"
+                + "  <!--for demo wrap-->\n"
+                + "  <h1>Reporte de Errores </h1>\n"
+                + "  <div class=\"tbl-header\">\n"
+                + "    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n"
+                + "      <thead>\n"
+                + "        <tr>\n"
+                + "          <th>Tipo</th>\n"
+                + "          <th>Lexema</th>\n"
+                + "          <th>Descripcion</th>\n"
+                + "          <th>Fila</th>\n"
+                + "          <th>Columna</th>\n"
+                + "        </tr>\n"
+                + "      </thead>\n"
+                + "    </table>\n"
+                + "  </div>\n"
+                + "  <div class=\"tbl-content\">\n"
+                + "    <table cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n"
+                + "      <tbody>\n"
+                + "\n"
+                + "        <!--Empieza el contenido-->";
+
+
+        return result;
+
+    }
+
+    public String pie() {
+
+        String result = "";
+
+        result = " <!--Termina el contenido-->\n"
+                + "\n"
+                + "      </tbody>\n"
+                + "    </table>\n"
+                + "  </div>\n"
+                + "</section>\n"
+                + "\n"
+                + "  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>\n"
+                + "\n"
+                + "    <script src=\"js/index.js\"></script>\n"
+                + "\n"
+                + "</body>\n"
+                + "</html>";
+
+        return result;
+    }
+
+    @Override
+    public String toString() {
+
+        String result = "";
+
+        result += encabazado();
+
+        for (TError tError : tabla) {
+            result += tError.toString();
+        }
+
+        result += pie();
+        return result;
+    }
+
+    public void escribirReporte() {
+
+        try {
+            String ruta = "/home/jonathan/Escritorio/2S2019/Compi/ReportesHtml/index.html";
+            File archivo = new File(ruta);
+            BufferedWriter bw;
+            if (archivo.exists()) {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write(toString());
+            } else {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write(toString());
+            }
+            bw.close();
+        } catch (Exception e) {
+        }
+
     }
 
 }

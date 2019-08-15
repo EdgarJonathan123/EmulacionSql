@@ -7,7 +7,7 @@ java -jar /home/jonathan/Documentos/7S/compi/Librerias/jflex-full-1.7.0.jar A_Le
 
 pause '\nPress [Enter] key to continue...\n'
 
-java -jar /home/jonathan/Documentos/7S/compi/Librerias/java-cup-11b.jar -parser analisis_sintactico -symbols simbolos A_Sintactico.cup
+java -jar /home/jonathan/Documentos/7S/compi/Librerias/java-cup-11b.jar -parser ASReportes -symbols simReportes A_Sintactico.cup
 
 
 

@@ -5,27 +5,28 @@ package Analisis.reportes;
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
 import Analisis.TError;
+import Analisis.TablaError;
 
 //-------------->Codigo para el parser, varibles, metodos
 
 parser code
 {:
 
-     public static LinkedList<TError> tablaES = new LinkedList<TError>();
+    
+     public TablaError tablaES = TablaError.getInstance();
     //Metodo al que se llama automaticamente ante algun error sintactico
     public void syntax_error(Symbol s)
     {
         String lexema = s.value.toString();
-        int fila=s.right;
-        int col = s.left;
+        int fila=s.left;
+        int col = s.right;
 
         System.out.println("!!!!!!Error sintactico recuperado!!!!!!!!");
         System.out.println("\t\tLexema: "+lexema);
         System.out.println("\t\tFila: "+fila);
         System.out.println("\t\tColumna: "+col);
         
-        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
-        tablaES.add(datos);
+        tablaES.setError(lexema,fila,col,"Error sintactico","El caracter no esperado");
 
     }
 
@@ -42,8 +43,7 @@ parser code
         System.out.println("\t\tFila: "+fila);
         System.out.println("\t\tColumna: "+col);
 
-        TError datos = new TError(lexema,fila,col,"Error sintactico","El caracter no esperado");
-        tablaES.add(datos);
+        tablaES.setError(lexema,fila,col,"Error sintactico","El caracter no esperado");
 
     }
 :}
@@ -104,23 +104,25 @@ LISTA_CUERPO ::= LISTA_CUERPO CUERPO
             |    CUERPO
             ;        
 
-CUERPO ::= DECLARACION
-        |   IMPRIMIR
-        |   GRAFICAR
+CUERPO ::= DECLARACION ptcoma
+        |   IMPRIMIR   ptcoma
+        |   GRAFICAR   ptcoma
         ;
 
 
-DECLARACION ::=  TIPODATO identificador igual FUNCION ptcoma
+DECLARACION ::=  TIPODATO identificador igual FUNCION 
             ;
 
 
 FUNCION     ::= PSLeerArchivo  parA cadena parC
             |   PSSumar parA identificador coma cadena parC
             |   PSContar parA identificador parC
-            |   PSPromedio parA identificador coma identificador parC
+            |   PSPromedio parA identificador coma cadena parC
             |   PSContarsi parA identificador coma  cadena coma COMPARACION coma PARAMETRO parC
             |   PSObtenersi parA identificador coma cadena coma COMPARACION coma PARAMETRO parC
             ;
+
+
 
 
 COMPARACION ::= menorque
@@ -131,14 +133,14 @@ COMPARACION ::= menorque
             |   negacion
             ;
 
-TIPODATO ::=  PSCadena
-            | PSNumerico
-            | PSArchivo    
+TIPODATO ::=  PSCadena:a {: System.out.println("CAD: "+a); :}
+            | PSNumerico:a {: System.out.println("Num: "+a); :}
+            | PSArchivo:a {: System.out.println("ARCH: "+a); :}    
             ;
 
 
-IMPRIMIR ::=  PSImprimir parA LISTA_PARAMETROS parC;
-GRAFICAR ::=  PSGraficar parA cadena coma cadena coma identificador coma cadena coma cadena  parC;
+IMPRIMIR ::=  PSImprimir parA LISTA_PARAMETROS parC ;
+GRAFICAR ::=  PSGraficar parA cadena coma cadena coma identificador coma cadena coma cadena  parC ;
 
 
 LISTA_PARAMETROS ::= LISTA_PARAMETROS coma PARAMETRO 
@@ -151,7 +153,6 @@ PARAMETRO ::=  cadena
             |   decimal
             |   entero
             ;
-
-
+            
 //-------------------------------Definicion de variables ----------------------
 

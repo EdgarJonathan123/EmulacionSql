@@ -59,6 +59,8 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
 %%
 /*-----------3ra Area: Reglas Lexicas-------------------------------*/
 
+
+
 //------------------->simDatos
 
 <YYINITIAL>     "," {System.out.println("Simbolo: ["+yytext()+"] coma");
@@ -90,6 +92,8 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
 
 
 
+
+
 //----------------------->simDatos Expresiones regulares
 <YYINITIAL>     {cadena} {System.out.println("Encontro: ["+yytext()+"] Cadena de Texto"); 
                          return new Symbol(simDatos.cadena,yyline,yychar, yytext().replace("\"", "") );} 
@@ -101,11 +105,14 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
                          return new Symbol(simDatos.decimal,yyline,yychar, yytext());}  
 
 
+
+
 //---------------->Espacios
 <YYINITIAL> {SPACE}     { /*Espacios en blanco, ignorados*/ }
-<YYINITIAL> {ENTER}     { /*Saltos de linea, ignorados*/}
+<YYINITIAL> {ENTER}     {yychar =0;}
 <YYINITIAL> {comentM} {}
 <YYINITIAL> {comentS} {}
+
 
 
 
@@ -114,6 +121,8 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
                     System.out.println("Error Lexico: "+yytext()+", Linea: "+yyline+", Col"+yycolumn);
                     tablaEL.setError(yytext(),yyline,yycolumn,"Error Lexico","Simbolo no existe en el lenguaje");
                 }
+
+
 
 
 

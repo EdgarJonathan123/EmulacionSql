@@ -122,18 +122,19 @@ public class ASDatos extends java_cup.runtime.lr_parser {
 
   
 
-    public Archivo raiz;
+    public  Archivo raiz;
     private Registro aux = null;
     private int indexR=0;
-
+    private int tamanioClave=0;
+    private Boolean errorSemantico = false;
 
      public TablaError tablaES = TablaError.getInstance();
     //Metodo al que se llama automaticamente ante algun error sintactico
     public void syntax_error(Symbol s)
     {
         String lexema = s.value.toString();
-        int fila=s.right;
-        int col = s.left;
+        int fila=s.left;
+        int col = s.right;
 
         System.out.println("!!!!!!Error sintactico recuperado!!!!!!!!");
         System.out.println("\t\tLexema: "+lexema);
@@ -167,6 +168,53 @@ public class ASDatos extends java_cup.runtime.lr_parser {
 class CUP$ASDatos$actions {
 
 
+
+
+        public void analizar(Simbolo b, Boolean Reinicio, int linea, int columna) {
+
+            if (Reinicio) {
+                indexR = 0;
+            }
+
+            if (aux != null) {
+                if (indexR < tamanioClave) {
+                    Simbolo t1 = aux.get(indexR);
+                    if (t1.compararTipo(b) != 0) {
+                        //error semantico
+                        System.out.println("Error Semantico EL TIPO QUE VIENE NO ES EL QUE SE REQUIERE");
+                        System.out.println("t1: " + t1.tipo.name());
+                        System.out.println("t2: " + b.tipo.name());
+                        String descripcion = "EL tipo de dato no coincide con el tipo de dato pedido";
+                        tablaES.setError(b.valor.toString(), linea, columna, "Dato: Semantico", descripcion);
+                        errorSemantico = true;
+                    }
+
+                } else {
+                    //error semantico
+                    System.out.println("Error Semantico EL TAMANIO DE EL REGISTRO ES ES MAYOR AL PEDIDO ");
+
+                    String descripcion = "La posicion del dato desborda al registro";
+                    tablaES.setError(b.valor.toString(), linea, columna, "Dato: Semantico", descripcion);
+                    errorSemantico = true;
+                }
+
+            }
+
+            indexR++;
+
+        }
+
+
+         private void verificarTamanio(int aux, int b, int linea ,int columna) {
+
+            if (b < aux) {
+                String descripcion = "ELtamano del registro es menor al definido";
+                System.out.println(descripcion);
+                tablaES.setError("Registro", linea, columna, "Dato: Semantico ", descripcion);
+                errorSemantico = true;
+
+            }
+        }
 
 
   private final ASDatos parser;
@@ -212,7 +260,16 @@ class CUP$ASDatos$actions {
 		int aright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).right;
 		Archivo a = (Archivo)((java_cup.runtime.Symbol) CUP$ASDatos$stack.peek()).value;
 		
-            parser.raiz = a;
+
+         
+
+            if(!errorSemantico){
+                System.out.println("error Semantico = false");
+                parser.raiz = a;  
+            }else{
+                System.out.println("error Semantico = true");
+            }
+                
         
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("INICIO",0, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -248,6 +305,7 @@ class CUP$ASDatos$actions {
 		 
                 RESULT =a;
                 RESULT.add(b);
+                tamanioClave++;
         
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("LCADENA",3, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-2)), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -263,7 +321,7 @@ class CUP$ASDatos$actions {
 		 
                 RESULT = new LinkedList<String>();
                 RESULT.add(a);
-               
+               tamanioClave++;
             
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("LCADENA",3, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -280,14 +338,9 @@ class CUP$ASDatos$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-1)).right;
 		Registro b = (Registro)((java_cup.runtime.Symbol) CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-1)).value;
 		 
-               if(aux.size()==a.size()){
-                    RESULT =a;
-                    RESULT.add(b);
-                    System.out.println("");
-                }else{
-                
-                }
-                
+                verificarTamanio(aux.size(), b.size(), bleft ,bright);
+                RESULT =a;
+                RESULT.add(b);
             
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("LREGISTRO",4, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-3)), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -301,11 +354,9 @@ class CUP$ASDatos$actions {
 		int aright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-1)).right;
 		Registro a = (Registro)((java_cup.runtime.Symbol) CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-1)).value;
 		
-            
                     RESULT = new LinkedList<Registro>();
                     RESULT.add(a);
                     aux = a;
-
             
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("LREGISTRO",4, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-2)), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -322,38 +373,9 @@ class CUP$ASDatos$actions {
 		int bright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).right;
 		Simbolo b = (Simbolo)((java_cup.runtime.Symbol) CUP$ASDatos$stack.peek()).value;
 		
-            
-                indexR++;
-                if(aux!=null){
-
-                    if(indexR<aux.size()){
-
-                        Simbolo  t1 = aux.get(indexR);
-
-                        if(t1.compararTipo(b)==0){
-                            RESULT = a; 
-                            RESULT.add(b);
-                            System.out.println("indexR = "+indexR);
-                            System.out.println("aux.size = "+aux.size());
-
-                        }else{
-                            //error semantico
-                            System.out.println("Error Semantico");
-                        }
-
-                    }else{
-
-                        //error semantico
-                        System.out.println("Error Semantico");
-                    }
-                  
-
-                }else{
-                    RESULT = a; 
-                    RESULT.add(b);
-                    System.out.println("Primera ves indexR = "+indexR);
-                }
-
+                analizar(b,false,bleft, bright);
+                RESULT = a;
+                RESULT.add(b);
             
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("REGISTRO",2, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.elementAt(CUP$ASDatos$top-2)), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -367,30 +389,9 @@ class CUP$ASDatos$actions {
 		int aright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).right;
 		Simbolo a = (Simbolo)((java_cup.runtime.Symbol) CUP$ASDatos$stack.peek()).value;
 		
-        
-                indexR=0;
-                if(aux!=null){
-
-
-                    Simbolo  t1 = aux.get(0);
-                
-                    if(t1.compararTipo(a)==0){
-                        RESULT = new Registro();
-                        RESULT.add(a);
-                        System.out.println("indexR = "+indexR);
-                    }else{
-                        //error semantico
-                        System.out.println("Error Semantico");
-                    }
-
-                }else{
-                    RESULT = new Registro();
-                    RESULT.add(a);
-                    System.out.println("Primera ves indexR = "+indexR);
-                }
-   
-
-              
+                analizar(a,true,aleft, aright);
+                RESULT = new Registro();
+                RESULT.add(a);
             
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("REGISTRO",2, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
@@ -415,7 +416,7 @@ class CUP$ASDatos$actions {
 		int aleft = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).right;
 		String a = (String)((java_cup.runtime.Symbol) CUP$ASDatos$stack.peek()).value;
-		RESULT = new Simbolo(TipoDato.decimal,a);
+		RESULT = new Simbolo(TipoDato.numerico,a);
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("DATO",5, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
           return CUP$ASDatos$result;
@@ -427,7 +428,7 @@ class CUP$ASDatos$actions {
 		int aleft = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()).right;
 		String a = (String)((java_cup.runtime.Symbol) CUP$ASDatos$stack.peek()).value;
-		RESULT  = new Simbolo(TipoDato.entero,a);
+		RESULT  = new Simbolo(TipoDato.numerico,a);
               CUP$ASDatos$result = parser.getSymbolFactory().newSymbol("DATO",5, ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), ((java_cup.runtime.Symbol)CUP$ASDatos$stack.peek()), RESULT);
             }
           return CUP$ASDatos$result;
