@@ -10,7 +10,7 @@ package Logica;
  * @author jonathan
  */
 public enum TipoDato {
-    numerico, cadena, archivo ,entero,decimal// tipos de datos permitidos
+    numerico, cadena, archivo // tipos de datos permitidos
    ,error //Para el manejo de errores
 
 

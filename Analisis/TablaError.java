@@ -65,9 +65,13 @@ public class TablaError {
         System.out.println("----------------------------Inicio Errores-------------------------");
         if (instancia != null) {
 
-            for (TError tError : tabla) {
-                tError.imprimir();
+            if (tabla != null) {
+                for (TError tError : tabla) {
+                    tError.imprimir();
+                }
+
             }
+
         }
         System.out.println("\n----------------------------Fin Errores----------------------------");
     }
@@ -110,7 +114,6 @@ public class TablaError {
                 + "\n"
                 + "        <!--Empieza el contenido-->";
 
-
         return result;
 
     }
@@ -142,9 +145,10 @@ public class TablaError {
         String result = "";
 
         result += encabazado();
-
-        for (TError tError : tabla) {
-            result += tError.toString();
+        if (tabla != null) {
+            for (TError tError : tabla) {
+                result += tError.toString();
+            }
         }
 
         result += pie();
@@ -154,20 +158,34 @@ public class TablaError {
     public void escribirReporte() {
 
         try {
-            String ruta = "/home/jonathan/Escritorio/2S2019/Compi/ReportesHtml/index.html";
+
+            String local = System.getProperty("user.dir");
+            String ruta = local + "/ReportesHtml/index.html";
+
             File archivo = new File(ruta);
             BufferedWriter bw;
             if (archivo.exists()) {
                 bw = new BufferedWriter(new FileWriter(archivo));
                 bw.write(toString());
+                System.out.println("se sobreescribio el archivo");
             } else {
                 bw = new BufferedWriter(new FileWriter(archivo));
                 bw.write(toString());
+                System.out.println("se creo el archivo");
             }
             bw.close();
         } catch (Exception e) {
+            System.out.println("error al escribir reportes");
+            System.out.println("Causa: " + e.getCause());
         }
 
     }
 
+    public String getPath() {
+
+        String local = System.getProperty("user.dir");
+        String ruta = local + "/ReportesHtml/index.html";
+
+        return ruta;
+    }
 }

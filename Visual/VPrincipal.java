@@ -5,12 +5,21 @@
  */
 package Visual;
 
+import Analisis.TablaError;
+import Analisis.reportes.ALReportes;
+import Analisis.reportes.ASReportes;
+import Logica.Entorno;
 import java.awt.Color;
+import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -48,11 +57,12 @@ public class VPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        textConsola = new javax.swing.JTextArea();
         Pestanas = new javax.swing.JTabbedPane();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         btnCompilar = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -60,14 +70,12 @@ public class VPrincipal extends javax.swing.JFrame {
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        textConsola.setColumns(20);
+        textConsola.setRows(5);
+        jScrollPane1.setViewportView(textConsola);
 
         jButton1.setText("nueva pestana");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -87,6 +95,13 @@ public class VPrincipal extends javax.swing.JFrame {
         btnCompilar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCompilarActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Limpiar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -120,14 +135,13 @@ public class VPrincipal extends javax.swing.JFrame {
 
         jMenu2.setText("Reportes");
 
-        jMenuItem4.setText("Reporte Lexico");
+        jMenuItem4.setText("Reporte");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem4);
-
-        jMenuItem3.setText("Reporte Sintactico");
-        jMenu2.add(jMenuItem3);
-
-        jMenuItem5.setText("Reporte Semantico");
-        jMenu2.add(jMenuItem5);
 
         jMenuBar1.add(jMenu2);
 
@@ -138,20 +152,24 @@ public class VPrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(Pestanas)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(80, 80, 80)
+                                .addComponent(btnCompilar)
+                                .addGap(107, 107, 107)
+                                .addComponent(jButton1)
+                                .addGap(60, 60, 60)
+                                .addComponent(jButton2))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(104, 104, 104)
-                        .addComponent(btnCompilar)
-                        .addGap(107, 107, 107)
-                        .addComponent(jButton1)
-                        .addGap(60, 60, 60)
-                        .addComponent(jButton2)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(Pestanas, javax.swing.GroupLayout.PREFERRED_SIZE, 653, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,8 +180,10 @@ public class VPrincipal extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(btnCompilar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Pestanas, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(Pestanas, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
@@ -193,8 +213,8 @@ public class VPrincipal extends javax.swing.JFrame {
             if (archivo.canRead()) {
                 if (archivo.getName().endsWith("rep")
                         || archivo.getName().endsWith("dat")) {
-                    String ruta = archivo.getPath();
-                    String document = openFile(archivo);
+                    String ruta = archivo.getAbsolutePath();
+                    String document = openFile(ruta);
                     addPestana(archivo.getName(), document, ruta);
                 } else {
                     JOptionPane.showMessageDialog(null, "Archivo No Compatible");
@@ -236,6 +256,42 @@ public class VPrincipal extends javax.swing.JFrame {
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         // TODO add your handling code here:
 
+        pestana auxpestana = (pestana) Pestanas.getSelectedComponent();
+
+        if (auxpestana.rutaEndWith(".rep")) {
+
+            try {
+                String Documento = auxpestana.getTexto();
+                ALReportes lexico = new ALReportes(new BufferedReader(new StringReader(Documento)));
+                ASReportes sintactico = new ASReportes(lexico);
+
+                System.out.println("------------Inicio Analisis----------");
+                sintactico.parse();
+                System.out.println("------------Fin Analisis--------");
+
+                if (sintactico.raiz != null) {
+
+                    Entorno ent = new Entorno();
+                    sintactico.raiz.Ejecutar(ent);
+                    textConsola.setText(ent.getConsola());
+
+                } else {
+
+                }
+
+            } catch (Exception ex) {
+
+                System.out.println("Error fatal en compilación de entrada.");
+                System.out.println("Causa: " + ex.getCause());
+                JOptionPane.showMessageDialog(null, "Error al compilar el archivo");
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(null, "No se puede compilar el archivo verifique sea de extension .rep");
+
+        }
+
+
     }//GEN-LAST:event_btnCompilarActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -243,13 +299,26 @@ public class VPrincipal extends javax.swing.JFrame {
         pestana auxpestana = (pestana) Pestanas.getSelectedComponent();
 
         if (!auxpestana.getRuta().equals("null")) {
-            
-            archivo  = new File(auxpestana.getRuta());
-            
+
+            archivo = new File(auxpestana.getRuta());
+
             try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(archivo)); 
-                out.write(auxpestana.getTexto());
-                JOptionPane.showMessageDialog(null, "Guardado Exitosamente");
+
+                String ruta = auxpestana.getRuta();
+
+                File archivo = new File(ruta);
+                BufferedWriter bw;
+                if (archivo.exists()) {
+                    bw = new BufferedWriter(new FileWriter(archivo));
+                    bw.write(auxpestana.getTexto());
+                    System.out.println("se sobreescribio el archivo");
+                } else {
+                    bw = new BufferedWriter(new FileWriter(archivo));
+                    bw.write(auxpestana.getTexto());
+                    System.out.println("se creo el archivo");
+                }
+                bw.close();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -263,7 +332,7 @@ public class VPrincipal extends javax.swing.JFrame {
                         || archivo.getName().endsWith("dat")) {
 
                     String Documento = auxpestana.getTexto();
-                    auxpestana.setRuta(archivo.getPath());
+                    auxpestana.setRuta(archivo.getAbsolutePath());
                     String mensaje = saveFile(archivo, Documento);
 
                     if (mensaje != null) {
@@ -279,6 +348,26 @@ public class VPrincipal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        textConsola.setText("");
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // ----------Reportes
+
+        try {
+
+            TablaError err = TablaError.getInstance();
+            err.escribirReporte();
+            File objetofile = new File(err.getPath());
+            Desktop.getDesktop().open(objetofile);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Primero compile un archivo para generar el archivo de errores por favor.");
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -315,18 +404,19 @@ public class VPrincipal extends javax.swing.JFrame {
         });
     }
 
-    private String openFile(File archivo) {
+    private String openFile(String path) {
 
         String documento = "";
+        String linea = "";
 
         try {
-            entrada = new FileInputStream(archivo);
 
-            int ascii;
-            while ((ascii = entrada.read()) != -1) {
+            FileInputStream file = new FileInputStream(path);
+            InputStreamReader inStream = new InputStreamReader(file, "utf-8");
+            BufferedReader in = new BufferedReader(inStream);
 
-                char caracter = (char) ascii;
-                documento += caracter;
+            while ((linea = in.readLine()) != null) {
+                documento += "\n" + linea;
             }
 
         } catch (Exception e) {
@@ -366,16 +456,15 @@ public class VPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnCompilar;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea textConsola;
     // End of variables declaration//GEN-END:variables
 }

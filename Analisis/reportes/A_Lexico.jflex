@@ -155,8 +155,8 @@ comentM = "/*"~ "*/"        //Comentario Multilinea
 //---------------->Espacios
 <YYINITIAL> {SPACE}     {  }
 <YYINITIAL> {ENTER}     {yychar =0;}
-<YYINITIAL> {comentM} { System.out.println("[Comentario multilinea]]"); }
-<YYINITIAL> {comentS} { System.out.println("[Comentario de una linea]]"); }
+<YYINITIAL> {comentM} { }
+<YYINITIAL> {comentS} {}
 
 
 

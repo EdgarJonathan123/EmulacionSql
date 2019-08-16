@@ -40,67 +40,14 @@ public class mainprueba {
         }
          */
         // String contenido = leer("/home/jonathan/Escritorio/2S2019/Compi/Ejemplo_Entrada_Práctica1/articulos.dat");
-        interpretarReporte("/**\n"
-                + "*	Creo una variable de tipo Archivo\n"
-                + "*/\n"
-                + "\n"
-                + "Archivo articulos = leerArchivo(\"articulos.dat\");\n"
-                + "Imprimir(articulos);\n"
-                + "\n"
-                + "// Veo cuántos registros tiene el archivo\n"
-                + "\n"
-                + "Numerico numeroRegistros = Contar(articulos);\n"
-                + "Imprimir(\"Número de registros: \", numeroRegistros); //20\n"
-                + "\n"
-                + "//Sumo el número de unidades en existencia\n"
-                + "Numerico sumaUnidades = Sumar(articulos, \"UnidadesEnExistencia\");\n"
-                + "Imprimir(\"El número de unidades es: \", sumaUnidades); //665.0\n"
-                + "\n"
-                + "// Veo cuál es el promedio del precio por unidad\n"
-                + "Numerico promedioUnidad = promedio(articulos,\"PrecioUnidad\");\n"
-                + "imprimir(\"El promedio de precio por unidad es: \", promedioUnidad); //31.3125\n"
-                + "\n"
-                + "// Veo cuántos productos tienen estado SUSPENDIDO\n"
-                + "Numerico suspendidos = contarSi(articulos, \"Suspendido\", ==, \"VERDADERO\");\n"
-                + "imprimir(\"Número de productos suspendidos: \", suspendidos); //3\n"
-                + "\n"
-                + "// Veo cuántos productos NO tienen estado SUSPENDIDO\n"
-                + "Numerico noSuspendidos = contarSi(articulos, \"Suspendido\", !=, \"VERDADERO\");\n"
-                + "imprimir(\"Número de productos NO suspendidos: \", noSuspendidos); //17\n"
-                + "imprimir(\"\");\n"
-                + "imprimir(\"\");\n"
-                + "\n"
-                + "// Obtengo la información de los productos de la categoría Frutas/Verduras\n"
-                + "Cadena frutas_verduras = ObtenerSi(articulos, \"Categoría\", ==, \"Frutas/Verduras\");\n"
-                + "Imprimir(\"******************** Frutas/Verduras ********************\");\n"
-                + "Imprimir(frutas_verduras);\n"
-                + "\n"
-                + "// Obtengo la información de los productos de la categoría Repostería\n"
-                + "Cadena reposteria = ObtenerSi(articulos, \"Categoría\", ==, \"Repostería\");\n"
-                + "Imprimir(\"******************** Repostería ********************\");\n"
-                + "Imprimir(reposteria);\n"
-                + "\n"
-                + "\n"
-                + "// Obtengo la información de los productos donde la existencia es menor a 20\n"
-                + "Cadena productos = ObtenerSi(articulos, \"UnidadesEnExistencia\", <, 20);\n"
-                + "Imprimir(\"******************** Productos con Existencia < 20 ********************\");\n"
-                + "Imprimir(productos);\n"
-                + "\n"
-                + "\n"
-                + "\n"
-                + "/**\n"
-                + "*	Generación de reportes con la función Graficar\n"
-                + "*/\n"
-                + "\n"
-                + "Graficar(\"precioProductos\", \"Precio por unidad de cada producto\", articulos, \"NombreProducto\", \"PrecioUnidad\");\n"
-                + "\n"
-                + "");
+       // interpretarReporte("/home/jonathan/Escritorio/2S2019/Compi/Ejemplo_Entrada_Práctica1/reporte_articulos.rep");
+        interpretarDatos("/home/jonathan/Documentos/2S2019/Compi/Ejemplo_Entrada_Práctica1/articulos.dat");
 
     }
 
     private static void interpretarDatos(String path) {
         try {
-            ALDatos lexico = new ALDatos(new BufferedReader(new StringReader(path)));
+            ALDatos lexico = new ALDatos(new BufferedReader(new FileReader(path)));
             ASDatos sintactico = new ASDatos(lexico);
 
             System.out.println("------------Inicio Analisis----------");
@@ -125,7 +72,7 @@ public class mainprueba {
 
     private static void interpretarReporte(String path) {
         try {
-            ALReportes lexico = new ALReportes(new BufferedReader(new StringReader(path)));
+            ALReportes lexico = new ALReportes(new BufferedReader(new FileReader(path)));
             ASReportes sintactico = new ASReportes(lexico);
 
             System.out.println("------------Inicio Analisis----------");
@@ -146,7 +93,7 @@ public class mainprueba {
             FileReader f = new FileReader(archivo);
             BufferedReader b = new BufferedReader(f);
             while ((cadena = b.readLine()) != null) {
-                cadena += cadena;
+                cadena +="\n"+cadena;
             }
             b.close();
 

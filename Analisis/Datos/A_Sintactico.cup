@@ -136,9 +136,6 @@ start with INICIO;
 /*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
 INICIO ::= CUERPO:a 
         {:
-
-         
-
             if(!errorSemantico){
                 System.out.println("error Semantico = false");
                 parser.raiz = a;  

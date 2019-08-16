@@ -26,16 +26,15 @@ public class pestana extends JScrollPane {
         this.name = name;
         textolinea = new TextLineNumber(texto);
         this.ruta = ruta;
-        this.setRowHeaderView(textolinea);  
+        this.setRowHeaderView(textolinea);
     }
 
     public Boolean rutaEndWith(String ext) {
 
-        String[] part = ruta.split(".");
+       if(ruta.endsWith(ext)){
+           return true;
+       }
 
-        if (part[1].equals(ext)) {
-            return true;
-        }
         return false;
     }
 

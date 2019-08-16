@@ -2,16 +2,35 @@
 //------------->Importaciones, paquetes
 
 package Analisis.reportes;
+
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
-import Analisis.TError;
 import Analisis.TablaError;
+import Logica.TipoDato;
+import Logica.Reportes.Expresion;
+import Logica.Reportes.Literal;
+import Logica.Reportes.Id;
+import Logica.Reportes.Instruccion;
+import Logica.Reportes.Funciones.LeerArchivo;
+import Logica.Reportes.Declaracion;
+import Logica.Reportes.Funcionalidad;
+import Logica.OpRel;
+import Logica.Reportes.Funciones.Contar;
+import Logica.Reportes.Imprimir;
+import Logica.Reportes.Imprimir;
+import Logica.Reportes.Funciones.Sumar;
+import Logica.Reportes.Funciones.Promedio;
+import Logica.Reportes.Funciones.ContarSi;
+import Logica.Reportes.Funciones.ObtenerSi;
 
 //-------------->Codigo para el parser, varibles, metodos
 
 parser code
 {:
 
+
+
+    public Funcionalidad raiz;
     
      public TablaError tablaES = TablaError.getInstance();
     //Metodo al que se llama automaticamente ante algun error sintactico
@@ -78,17 +97,16 @@ terminal String cadena,entero,decimal,identificador;
 //------------------------------>declaracion de no terminales
 //general
 non terminal String INICIO;
-non terminal String CUERPO;
-
-non terminal String DECLARACION;
-non terminal String IMPRIMIR;
-non terminal String TIPODATO;
+non terminal Instruccion CUERPO;
+non terminal Expresion PARAMETRO;
+non terminal Instruccion DECLARACION;
+non terminal Instruccion IMPRIMIR;
+non terminal TipoDato TIPODATO;
 non terminal String GRAFICAR;
-non terminal String FUNCION;
-non terminal String COMPARACION;
-non terminal String LISTA_PARAMETROS;
-non terminal String PARAMETRO;
-non terminal String LISTA_CUERPO;
+non terminal Expresion FUNCION;
+non terminal OpRel COMPARACION;
+non terminal LinkedList<Expresion>  LISTA_PARAMETROS;
+non terminal LinkedList<Instruccion> LISTA_CUERPO;
 
  
 //------------>precendencia de menor a mayor
@@ -97,61 +115,121 @@ start with INICIO
 ;
 /*----------------------3ra Area: Reglas Semanticas ---------------------------------------------*/
 
-INICIO ::= LISTA_CUERPO
+INICIO ::= LISTA_CUERPO:a
+        {:
+             parser.raiz = new Funcionalidad(a);
+        :}
         ;
 
-LISTA_CUERPO ::= LISTA_CUERPO CUERPO
-            |    CUERPO
+
+LISTA_CUERPO ::= LISTA_CUERPO:a CUERPO:b ptcoma 
+            {: 
+                RESULT = a;
+                RESULT.add(b);
+            :}
+            |    CUERPO:a ptcoma
+            {: 
+                RESULT = new LinkedList<>();
+                RESULT.add(a);
+            :}            
             ;        
 
-CUERPO ::= DECLARACION ptcoma
-        |   IMPRIMIR   ptcoma
-        |   GRAFICAR   ptcoma
+CUERPO ::= DECLARACION:a
+        {: 
+            RESULT =a;
+        :}
+        |   IMPRIMIR:a  
+        {: 
+            RESULT = a;
+        :}
+        |   GRAFICAR  
+        {: 
+        
+        :}
         ;
 
 
-DECLARACION ::=  TIPODATO identificador igual FUNCION 
+DECLARACION ::=  TIPODATO:tipo identificador:nombre igual FUNCION:fun
+            {: 
+                RESULT = new Declaracion(tipo,nombre,fun);
+            :}
             ;
 
 
-FUNCION     ::= PSLeerArchivo  parA cadena parC
-            |   PSSumar parA identificador coma cadena parC
-            |   PSContar parA identificador parC
-            |   PSPromedio parA identificador coma cadena parC
-            |   PSContarsi parA identificador coma  cadena coma COMPARACION coma PARAMETRO parC
-            |   PSObtenersi parA identificador coma cadena coma COMPARACION coma PARAMETRO parC
+FUNCION     ::= PSLeerArchivo  parA PARAMETRO:ruta parC 
+            {:
+                RESULT = new LeerArchivo(ruta,rutaleft,rutaright);
+            :}
+            |   PSSumar parA PARAMETRO:id coma PARAMETRO:cl parC
+            {:
+                 RESULT = new Sumar(id,clleft,clright,cl);
+            :}
+            |   PSContar parA PARAMETRO:id parC
+            {:
+                RESULT = new Contar(id,idleft,idright);
+            :}
+            |   PSPromedio parA PARAMETRO:id coma PARAMETRO:cl parC
+             {:
+                 RESULT = new Promedio(id,clleft,clright,cl);
+            :}
+            |   PSContarsi parA PARAMETRO:id coma  PARAMETRO:clave1 coma COMPARACION:rel coma PARAMETRO:clave2 parC
+            {:
+                RESULT = new ContarSi(id,clave1,clave2,rel,idleft,idright);
+            :}
+            |   PSObtenersi parA PARAMETRO:id coma PARAMETRO:clave1 coma COMPARACION:rel coma PARAMETRO:clave2 parC
+            {:
+                  RESULT = new ObtenerSi(id,clave1,clave2,rel,idleft,idright);
+            :}
             ;
 
 
 
 
-COMPARACION ::= menorque
-            |   mayorque
-            |   mayorigual
-            |   menorigual
-            |   dobleigual
-            |   negacion
+COMPARACION ::= menorque{: RESULT  = OpRel.menorque; :}
+            |   mayorque{: RESULT  = OpRel.mayorque; :}
+            |   mayorigual{: RESULT  = OpRel.mayorigual; :}
+            |   menorigual{: RESULT  = OpRel.menorigual; :}
+            |   dobleigual{: RESULT  = OpRel.dobleigual; :}
+            |   negacion{: RESULT  = OpRel.negacion; :}
             ;
 
-TIPODATO ::=  PSCadena:a {: System.out.println("CAD: "+a); :}
-            | PSNumerico:a {: System.out.println("Num: "+a); :}
-            | PSArchivo:a {: System.out.println("ARCH: "+a); :}    
+TIPODATO ::=  PSCadena{: RESULT  = TipoDato.cadena; :}
+            | PSNumerico:a{: RESULT  = TipoDato.numerico; :}
+            | PSArchivo:a{: RESULT  = TipoDato.archivo; :}
             ;
 
 
-IMPRIMIR ::=  PSImprimir parA LISTA_PARAMETROS parC ;
-GRAFICAR ::=  PSGraficar parA cadena coma cadena coma identificador coma cadena coma cadena  parC ;
+IMPRIMIR ::=  PSImprimir parA LISTA_PARAMETROS:a parC 
+            {:
+                     RESULT = new Imprimir(a);       
+            :}
+            ;
 
 
-LISTA_PARAMETROS ::= LISTA_PARAMETROS coma PARAMETRO 
-                    | PARAMETRO 
+GRAFICAR ::=  PSGraficar parA cadena coma cadena coma identificador coma cadena coma cadena  parC 
+            {:
+
+            :}
+            ;
+
+
+LISTA_PARAMETROS ::= LISTA_PARAMETROS:a coma PARAMETRO:b
+                    {: 
+                        RESULT = a;
+                        RESULT.add(b);
+                    :}
+                    | PARAMETRO:a
+                    {: 
+                        RESULT = new LinkedList<>();
+                        RESULT.add(a);
+                    :}
                     ;
 
 
-PARAMETRO ::=  cadena
-            |   identificador
-            |   decimal
-            |   entero
+PARAMETRO ::=   cadena:a{: RESULT = new Literal(TipoDato.cadena,a); :}
+            |   identificador:a{: RESULT = new Id(a,aleft,aright); :}
+            |   decimal:a{: RESULT = new Literal(TipoDato.numerico,a); :}
+            |   entero:a{: RESULT = new Literal(TipoDato.numerico,a); :}
             ;
             
 //-------------------------------Definicion de variables ----------------------

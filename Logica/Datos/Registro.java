@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -21,25 +21,37 @@ public class Registro {
 
     }
 
+    public String obtenerCadena(String clave) {
+
+        String result = "";
+
+        result+="{";
+        for (Simbolo dato : datos) {
+            result+=  dato.obtenerCadena(clave);
+        }
+        result+="}\n";
+
+        return result;
+    }
+
     public Registro() {
         this.datos = new LinkedList<Simbolo>();
     }
 
-    public  void add(Simbolo sim){
+    public void add(Simbolo sim) {
         this.datos.add(sim);
     }
-    
-    public int size(){
-        
-   
+
+    public int size() {
+
         return this.datos.size();
     }
-    
-    public Simbolo get(int index){
-        
-        return  this.datos.get(index);
+
+    public Simbolo get(int index) {
+
+        return this.datos.get(index);
     }
-    
+
     /**
      * @return the datos
      */
@@ -53,18 +65,14 @@ public class Registro {
     public void setDatos(LinkedList<Simbolo> datos) {
         this.datos = datos;
     }
-   
-    
-    
-    public void Imprimir(){
-        
+
+    public void Imprimir() {
+
         for (Simbolo dato : datos) {
-            String data = (String)dato.valor;
-            System.out.print("{"+data+"] - ");
+            String data = (String) dato.valor;
+            System.out.print("{" + data + "] - ");
         }
         System.out.println("");
     }
-    
-    
 
 }
